@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-grid">
+    
+    <!-- Панель управления и фильтров -->
+    <aside class="control-sidebar">
+        <h3 class="sidebar-title">Параметры анализа</h3>
+        
+        <form id="analytics-form" class="control-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="region-select">Целевой бассейн:</label>
+                <select id="region-select" name="region" class="form-control">
+                    <option value="naryn">Бассейн р. Нарын (Ферганская долина)</option>
+                    <option value="syrdarya">Верховья Сырдарьи (Наманган)</option>
+                    <option value="andijan">Андижанский речной бассейн</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="farming">Агрокультура:</label>
+                <select id="farming" name="farming" class="form-control">
+                    <option value="cotton">Хлопководство</option>
+                    <option value="orchards">Садоводство</option>
+                    <option value="wheat">Зерновые</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label>Начало:</label>
+                    <input type="date" id="date_start" value="2026-05-01" class="form-control">
+                </div>
+                <div class="form-group col">
+                    <label>Конец:</label>
+                    <input type="date" id="date_end" value="2026-06-01" class="form-control">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-nasa-primary">Запустить спутниковый анализ</button>
+        </form>
+
+        <div class="telemetry-box mt-4">
+            <p><b>Спутниковый факт:</b> <span id="farming-fact">70% воды для полива поступает с таяния снежного покрова Тянь-Шаня.</span></p>
+        </div>
+    </aside>
+
+    <!-- Основная область: карта, показатели и дашборд -->
+    <section class="workspace">
+        
+        <div class="workspace-top-grid">
+            <div class="card map-card">
+                <div class="card-header">
+                    <h4>Геопространственная карта стока</h4>
+                </div>
+                <div id="leaflet-map" class="map-viewport"></div>
+            </div>
+
+            <div class="card metrics-card">
+                <div class="card-header">
+                    <h4>Телеметрия MODIS</h4>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-block">
+                        <span class="label">Площадь снега</span>
+                        <span class="value" id="val-snow">450.5 км²</span>
+                        <span class="delta negative">-12.4%</span>
+                    </div>
+                    <div class="metric-block">
+                        <span class="label">Покрытие бассейна</span>
+                        <span class="value" id="val-cover">37.5%</span>
+                        <span class="delta negative">-4.2%</span>
+                    </div>
+                    <div class="metric-block">
+                        <span class="label">Динамика таяния</span>
+                        <span class="value" id="val-trend">Ускоренное</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card tabs-card mt-4">
+            <div class="tab-headers">
+                <button class="tab-btn active" type="button">🤖 ИИ Прогноз</button>
+                <button class="tab-btn" type="button">Путь Капли</button>
+                <button class="tab-btn" type="button">Машина времени</button>
+                <button class="tab-btn" type="button">Симулятор "Что, если?"</button>
+            </div>
+
+            <div class="tab-content">
+                <div id="tab-ai-forecast" class="tab-pane active">
+                    <div class="forecast-layout">
+                        <div class="controls">
+                            <label>Горизонт ML-прогноза:</label>
+                            <input type="range" id="forecast-slider" min="30" max="180" step="30" value="90">
+                            <span id="horizon-val">90 дней</span>
+                        </div>
+                        <div id="plotly-forecast-chart" class="chart-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script type="module" src="{% static 'js/app.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CryoFlow | NASA Glacier Intelligence{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="{% static 'css/nasa_theme.css' %}">
+
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="nasa-layout">
+
+    <header class="app-header">
+        <div class="header-brand">
+            <svg class="nasa-logo" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="#0B3D91"/>
+                <path d="M4 12c4-3 12-3 16 0M6 8c3 6 9 8 12 8" stroke="#FC3D21" stroke-width="1.5"/>
+                <circle cx="8" cy="9" r="1" fill="#FFF"/>
+            </svg>
+            <div class="brand-title">
+                <span class="name">CryoFlow</span>
+                <span class="sub">Glacier Telemetry System</span>
+            </div>
+        </div>
+
+        <div class="header-telemetry">
+            <span class="status-indicator">
+                <span class="pulse-dot"></span> MODIS TERRA/AQUA: ONLINE
+            </span>
+        </div>
+
+        <nav class="header-nav">
+            <select id="lang-select" class="nav-select">
+                <option value="ru" selected>Русский</option>
+                <option value="uz">O'zbek</option>
+                <option value="en">English</option>
+            </select>
+        </nav>
+    </header>
+
+    <main class="app-body">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-left">
+            <span>© 2026 CryoFlow Central Asia Glacier Monitoring</span>
+            <span class="divider">|</span>
+            <span>Data Source: NASA CMR / MOD10A1 Snow Cover</span>
+        </div>
+        <div class="footer-right">
+            <span class="mono">LAT/LON: 41.2° N, 73.8° E</span>
+            <span class="divider">|</span>
+            <span class="mono">SYSTEM HEALTH: 100%</span>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

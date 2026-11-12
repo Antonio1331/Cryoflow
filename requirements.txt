@@ -8,3 +8,4 @@ numpy>=1.26.0
 pandas>=2.1.0
 plotly>=5.18.0
 gunicorn>=21.2.0
+dj-database-url>=2.1.0

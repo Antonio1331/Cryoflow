@@ -3,101 +3,233 @@
 
 {% block content %}
 <div class="dashboard-grid">
-    
-    <!-- Панель управления и фильтров -->
-    <aside class="control-sidebar">
-        <h3 class="sidebar-title">Параметры анализа</h3>
-        
+
+    <!-- Левая панель управления миссией -->
+    <aside class="control-sidebar hud-frame">
+        <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+
+        <div class="section-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+            </svg>
+            <span data-i18n="sidebar_title">ПАРАМЕТРЫ ТЕЛЕМЕТРИИ</span>
+        </div>
+
         <form id="analytics-form" class="control-form">
             {% csrf_token %}
             <div class="form-group">
-                <label for="region-select">Целевой бассейн:</label>
+                <label for="region-select" data-i18n="label_basin">ЦЕЛЕВОЙ РЕЧНОЙ БАССЕЙН</label>
                 <select id="region-select" name="region" class="form-control">
-                    <option value="naryn">Бассейн р. Нарын (Ферганская долина)</option>
-                    <option value="syrdarya">Верховья Сырдарьи (Наманган)</option>
-                    <option value="andijan">Андижанский речной бассейн</option>
+                    <option value="naryn" data-i18n="opt_naryn">Бассейн р. Нарын (Ферганская долина)</option>
+                    <option value="syrdarya" data-i18n="opt_syrdarya">Верховья Сырдарьи (Наманган)</option>
+                    <option value="andijan" data-i18n="opt_andijan">Андижанский речной бассейн</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="farming">Агрокультура:</label>
-                <select id="farming" name="farming" class="form-control">
-                    <option value="cotton">Хлопководство</option>
-                    <option value="orchards">Садоводство</option>
-                    <option value="wheat">Зерновые</option>
+                <label for="farming-select" data-i18n="label_sector">СЕКТОР ВОДОПОТРЕБЛЕНИЯ</label>
+                <select id="farming-select" name="farming" class="form-control">
+                    <option value="cotton" data-i18n="opt_cotton">Хлопководство (Орошаемые земли)</option>
+                    <option value="orchards" data-i18n="opt_orchards">Садоводство и виноградники</option>
+                    <option value="wheat" data-i18n="opt_wheat">Зерновые культуры</option>
                 </select>
             </div>
 
             <div class="form-row">
                 <div class="form-group col">
-                    <label>Начало:</label>
-                    <input type="date" id="date_start" value="2026-05-01" class="form-control">
+                    <label for="date_start" data-i18n="label_start">НАЧАЛО ПЕРИОДА</label>
+                    <input type="date" id="date_start" value="2026-05-01" class="form-control mono">
                 </div>
                 <div class="form-group col">
-                    <label>Конец:</label>
-                    <input type="date" id="date_end" value="2026-06-01" class="form-control">
+                    <label for="date_end" data-i18n="label_end">КОНЕЦ ПЕРИОДА</label>
+                    <input type="date" id="date_end" value="2026-06-01" class="form-control mono">
                 </div>
             </div>
 
-            <button type="submit" class="btn-nasa-primary">Запустить спутниковый анализ</button>
+            <button type="submit" class="btn-nasa-primary" id="btn-analyze">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span data-i18n="btn_analyze">ЗАПУСТИТЬ СПУТНИКОВЫЙ АНАЛИЗ</span>
+            </button>
         </form>
 
         <div class="telemetry-box mt-4">
-            <p><b>Спутниковый факт:</b> <span id="farming-fact">70% воды для полива поступает с таяния снежного покрова Тянь-Шаня.</span></p>
+            <div class="telemetry-box-header">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/>
+                </svg>
+                <span data-i18n="jpl_summary_title">СПУТНИКОВАЯ СВОДКА JPL</span>
+            </div>
+            <p id="farming-fact">До 72% оросительной воды для хлопчатника Ферганской долины формируется за счет сезонного таяния ледников и снежников бассейна Нарына.</p>
         </div>
     </aside>
 
-    <!-- Основная область: карта, показатели и дашборд -->
+    <!-- Правая рабочая зона -->
     <section class="workspace">
-        
+
         <div class="workspace-top-grid">
-            <div class="card map-card">
+            <!-- Карта -->
+            <div class="card map-card hud-frame">
+                <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
                 <div class="card-header">
-                    <h4>Геопространственная карта стока</h4>
+                    <div class="header-with-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        <h4 data-i18n="map_header">ГЕОПРОСТРАНСТВЕННАЯ КАРТА СТОКА // ESRI ORBITAL</h4>
+                    </div>
+                    <span class="badge-live" id="map-basin-badge">БАССЕЙН: НАРЫН</span>
                 </div>
                 <div id="leaflet-map" class="map-viewport"></div>
             </div>
 
-            <div class="card metrics-card">
+            <!-- Карточка телеметрии -->
+            <div class="card metrics-card hud-frame">
+                <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
                 <div class="card-header">
-                    <h4>Телеметрия MODIS</h4>
+                    <div class="header-with-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                        <h4 data-i18n="telemetry_header">ТЕЛЕМЕТРИЯ MODIS</h4>
+                    </div>
+                    <span class="risk-pill" id="risk-badge">NOMINAL</span>
                 </div>
                 <div class="metrics-grid">
                     <div class="metric-block">
-                        <span class="label">Площадь снега</span>
-                        <span class="value" id="val-snow">450.5 км²</span>
-                        <span class="delta negative">-12.4%</span>
+                        <span class="label" data-i18n="metric_snow">ПЛОЩАДЬ СНЕЖНОГО ПОКРОВА</span>
+                        <div class="value-row">
+                            <span class="value" id="val-snow">1450.5 км²</span>
+                            <span class="delta negative" id="delta-snow">-12.4%</span>
+                        </div>
                     </div>
                     <div class="metric-block">
-                        <span class="label">Покрытие бассейна</span>
-                        <span class="value" id="val-cover">37.5%</span>
-                        <span class="delta negative">-4.2%</span>
+                        <span class="label" data-i18n="metric_granules">СНИМКИ NASA CMR (MOD10A1)</span>
+                        <div class="value-row">
+                            <span class="mono-sub" id="val-granules">ЗАГРУЗКА...</span>
+                            <button type="button" id="btn-export-csv" class="btn-export-mini" title="Экспорт в CSV">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                <span>CSV</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="metric-block">
-                        <span class="label">Динамика таяния</span>
-                        <span class="value" id="val-trend">Ускоренное</span>
+                        <span class="label" data-i18n="metric_melt">ИНТЕНСИВНОСТЬ ТАЯНИЯ</span>
+                        <div class="value-row">
+                            <span class="value" id="val-trend">Умеренное</span>
+                            <span class="mono-sub" id="val-rate">14.2% / мес</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card tabs-card mt-4">
+
+        <!-- Нижняя панель аналитических модулей -->
+        <div class="card tabs-card mt-4 hud-frame">
+            <div class="hud-corner bl"></div><div class="hud-corner br"></div>
             <div class="tab-headers">
-                <button class="tab-btn active" type="button">🤖 ИИ Прогноз</button>
-                <button class="tab-btn" type="button">Путь Капли</button>
-                <button class="tab-btn" type="button">Машина времени</button>
-                <button class="tab-btn" type="button">Симулятор "Что, если?"</button>
+                <button class="tab-btn active" type="button" data-target="pane-ai-forecast">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+                    </svg>
+                    <span data-i18n="tab_forecast">ИИ Прогноз стока</span>
+                </button>
+                <button class="tab-btn" type="button" data-target="pane-drop-journey">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                    </svg>
+                    <span data-i18n="tab_journey">Путь Капли</span>
+                </button>
+                <button class="tab-btn" type="button" data-target="pane-time-machine">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span data-i18n="tab_timemachine">Машина времени (2016–2026)</span>
+                </button>
+                <button class="tab-btn" type="button" data-target="pane-what-if">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>
+                    </svg>
+                    <span data-i18n="tab_whatif">Симулятор «Что, если?»</span>
+                </button>
             </div>
 
             <div class="tab-content">
-                <div id="tab-ai-forecast" class="tab-pane active">
-                    <div class="forecast-layout">
-                        <div class="controls">
-                            <label>Горизонт ML-прогноза:</label>
-                            <input type="range" id="forecast-slider" min="30" max="180" step="30" value="90">
-                            <span id="horizon-val">90 дней</span>
+                <!-- Вкладка 1: ИИ Прогноз -->
+                <div id="pane-ai-forecast" class="tab-pane active">
+                    <div class="controls-bar">
+                        <label for="forecast-slider" data-i18n="label_horizon">ГОРИЗОНТ ML-ЭКСТРАПОЛЯЦИИ:</label>
+                        <input type="range" id="forecast-slider" min="30" max="180" step="30" value="90" class="nasa-slider">
+                        <span id="horizon-val" class="mono-badge">90 ДНЕЙ</span>
+                    </div>
+                    <div id="plotly-forecast-chart" class="chart-container"></div>
+                </div>
+
+                <!-- Вкладка 2: Путь Капли -->
+                <div id="pane-drop-journey" class="tab-pane">
+                    <div class="journey-pipeline">
+                        <div class="journey-node">
+                            <span class="node-alt" data-i18n="journey_source_alt">4,300 М // ИСТОК</span>
+                            <strong id="journey-glacier">Ледник Петрова</strong>
+                            <small data-i18n="journey_source_sub">Зона аккумуляции снега</small>
                         </div>
-                        <div id="plotly-forecast-chart" class="chart-container"></div>
+                        <div class="journey-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </div>
+                        <div class="journey-node">
+                            <span class="node-alt" data-i18n="journey_river_alt">1,850 М // РУСЛО</span>
+                            <strong id="journey-river">Река Нарын / Сырдарья</strong>
+                            <small data-i18n="journey_river_sub">Транзит талого стока</small>
+                        </div>
+                        <div class="journey-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </div>
+                        <div class="journey-node">
+                            <span class="node-alt" data-i18n="journey_dam_alt">880 М // ГИДРОУЗЕЛ</span>
+                            <strong data-i18n="journey_dam_title">Токтогульское / Андижанское вдхр.</strong>
+                            <small data-i18n="journey_dam_sub">Регулирование сброса</small>
+                        </div>
+                        <div class="journey-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </div>
+                        <div class="journey-node highlight">
+                            <span class="node-alt" data-i18n="journey_agro_alt">420 М // АГРОЗОНА</span>
+                            <strong data-i18n="journey_agro_title">Оросительные каналы долины</strong>
+                            <small data-i18n="journey_agro_sub">Время добегания: ~38 часов</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка 3: Машина времени -->
+                <div id="pane-time-machine" class="tab-pane">
+                    <div id="plotly-history-chart" class="chart-container"></div>
+                </div>
+
+                <!-- Вкладка 4: Симулятор Что, если? -->
+                <div id="pane-what-if" class="tab-pane">
+                    <div class="simulator-grid">
+                        <div class="sim-controls">
+                            <div class="sim-control-row">
+                                <label for="temp-sim" data-i18n="sim_temp_label">Аномалия летней температуры (°C):</label>
+                                <input type="range" id="temp-sim" min="0.5" max="4.5" step="0.5" value="1.5" class="nasa-slider">
+                                <span id="temp-val" class="mono-badge">+1.5 °C</span>
+                            </div>
+                            <div class="sim-control-row">
+                                <label for="precip-sim" data-i18n="sim_precip_label">Изменение зимних осадков (%):</label>
+                                <input type="range" id="precip-sim" min="-30" max="20" step="5" value="-10" class="nasa-slider">
+                                <span id="precip-val" class="mono-badge">-10%</span>
+                            </div>
+                        </div>
+                        <div class="sim-result-panel">
+                            <span class="label" data-i18n="sim_deficit_label">ПРОГНОЗИРУЕМЫЙ ДЕФИЦИТ ВОДЫ К АВГУСТУ</span>
+                            <div class="sim-deficit-val" id="sim-deficit">-23.5%</div>
+                            <p id="sim-advice" data-i18n="sim_advice">Рекомендуется переход на капельное орошение и ночной полив для снижения испарения на 18%.</p>
+                        </div>
                     </div>
                 </div>
             </div>

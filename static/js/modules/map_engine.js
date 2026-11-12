@@ -2,28 +2,53 @@ export class MapEngine {
     constructor(elementId, initialCoords) {
         this.map = L.map(elementId, {
             center: initialCoords,
-            zoom: 8,
+            zoom: 7,
             zoomControl: true
         });
 
-        // Бесплатная спутниковая карта Esri (не требует API-ключа)
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 19,
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            maxZoom: 18,
+            attribution: 'NASA / Esri Orbital Imagery'
         }).addTo(this.map);
 
-        this.polygonLayer = L.layerGroup().addTo(this.map);
+        this.overlayLayer = L.layerGroup().addTo(this.map);
     }
 
-    renderRegion(coordinates) {
-        this.polygonLayer.clearLayers();
-        const polygon = L.polygon(coordinates, {
+    renderBasinTelemetry(basinData) {
+        this.overlayLayer.clearLayers();
+        if (!basinData || !basinData.coords) return;
+
+        const polygon = L.polygon(basinData.coords, {
             color: '#38BDF8',
             fillColor: '#0EA5E9',
-            fillOpacity: 0.3,
-            weight: 25
-        });
-        polygon.addTo(this.polygonLayer);
-        this.map.fitBounds(polygon.getBounds());
+            fillOpacity: 0.25,
+            weight: 2.5
+        }).addTo(this.overlayLayer);
+
+        if (basinData.flow_path) {
+            L.polyline(basinData.flow_path, {
+                color: '#FC3D21',
+                weight: 3,
+                dashArray: '6, 6'
+            }).addTo(this.overlayLayer);
+        }
+
+        if (basinData.glacier) {
+            const glacierIcon = L.divIcon({
+                className: 'nasa-glacier-pin',
+                html: `<svg width="24" height="24" viewBox="0 0 24 24" fill="#0B3D91" stroke="#38BDF8" stroke-width="2">
+                        <polygon points="12 2 22 20 2 20"/>
+                       </svg>`,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+
+            L.marker([basinData.glacier.lat, basinData.glacier.lon], { icon: glacierIcon })
+                .bindPopup(`<b>${basinData.glacier.name}</b><br>Источник питания: ${basinData.name}`)
+                .addTo(this.overlayLayer);
+        }
+
+        this.map.invalidateSize();
+        this.map.fitBounds(polygon.getBounds(), { padding: [25, 25] });
     }
 }
